@@ -1,0 +1,239 @@
+>>> import os
+>>> os.path.join('usr', 'bin', 'spam')
+'usr\\bin\\spam'
+>>> myFiles = ['accounts.txt', 'details.csv', 'invite.docx']
+>>> for filename in myFiles:
+		print(os.path.join('C:\\Users\\asweigart', filename))
+C:\Users\asweigart\accounts.txt
+C:\Users\asweigart\details.csv
+C:\Users\asweigart\invite.docx
+
+>>> os.path.abspath('.')
+'C:\\Python34'
+>>> os.path.abspath('.\\Scripts')
+'C:\\Python34\\Scripts'
+
+>>> os.path.relpath('C:\\Windows', 'C:\\')
+'Windows'
+>>> os.path.relpath('C:\\Windows', 'C:\\spam\\eggs')
+'..\\..\\Windows'
+>>> os.getcwd()
+'C:\\Python34'
+
+>>> path = 'C:\\Windows\\System32\\calc.exe'
+>>> os.path.basename(path)
+'calc.exe'
+>>> os.path.dirname(path)
+'C:\\Windows\\System32'
+>>> calcFilePath = 'C:\\Windows\\System32\\calc.exe'
+>>> os.path.split(calcFilePath)
+('C:\\Windows\\System32', 'calc.exe')
+>>> (os.path.dirname(calcFilePath), os.path.basename(calcFilePath))
+('C:\\Windows\\System32', 'calc.exe')
+>>> calcFilePath.split(os.path.sep)
+['C:', 'Windows', 'System32', 'calc.exe']
+>>> '/usr/bin'.split(os.path.sep)
+['', 'usr', 'bin']
+
+
+## Creating New Folders with os.makedirs()
+
+>>> os.makedirs('C:\\delicious\\walnut\\waffles')
+
+## Checking Path Validity
+
+>>> os.path.exists('C:\\Windows')
+True
+>>> os.path.exists('C:\\some_made_up_folder')
+False
+>>> os.path.isdir('C:\\Windows\\System32')
+True
+>>> os.path.isfile('C:\\Windows\\System32')
+False
+>>> os.path.isdir('C:\\Windows\\System32\\calc.exe')
+False
+>>> os.path.isfile('C:\\Windows\\System32\\calc.exe')
+True
+
+######################################
+# File Read & Write
+######################################
+
+# Open File
+
+# Windows
+>>> helloFile = open('C:\\Users\\your_home_folder\\hello.txt')
+
+# OS X
+>>> helloFile = open('/Users/your_home_folder/hello.txt')
+
+# Reading the Contents of Files
+>>> helloContent = helloFile.read()
+>>> helloContent
+'Hello world!'
+
+# Read lines
+
+sonnet29.txt
+When, in disgrace with fortune and men's eyes,
+I all alone beweep my outcast state,
+And trouble deaf heaven with my bootless cries,
+And look upon myself and curse my fate,
+
+>>> sonnetFile = open('sonnet29.txt')
+>>> sonnetFile.readlines()
+['When, in disgrace with fortune and men's eyes,\n', 
+' I all alone beweep my outcast state,\n', 
+'And trouble deaf heaven with my bootless cries,\n', 
+'And look upon myself and curse my fate,']
+
+## Writing to Files
+
+>>> baconFile = open('bacon.txt', 'w')
+>>> baconFile.write('Hello world!\n')
+>>> baconFile.close()
+
+>>> baconFile = open('bacon.txt', 'a')
+>>> baconFile.write('Bacon is not a vegetable.')
+>>> baconFile.close()
+
+>>> baconFile = open('bacon.txt')
+>>> content = baconFile.read()
+>>> baconFile.close()
+
+>>> print(content)
+
+Hello world!
+Bacon is not a vegetable.
+
+# Plaintext is useful for creating files that you¡¯ll read in a text editor such
+# as Notepad or TextEdit, but if you want to save data from your Python programs,
+# use the shelve module.
+
+>>> import shelve
+>>> shelfFile = shelve.open('mydata')
+>>> cats = ['Zophie', 'Pooka', 'Simon']
+>>> shelfFile['cats'] = cats
+>>> shelfFile.close()
+
+>>> shelfFile = shelve.open('mydata')
+>>> type(shelfFile)
+<class 'shelve.DbfilenameShelf'>
+>>> shelfFile['cats']
+['Zophie', 'Pooka', 'Simon']
+>>> shelfFile.close()
+
+>>> shelfFile = shelve.open('mydata')
+>>> list(shelfFile.keys())
+['cats']
+>>> list(shelfFile.values())
+[['Zophie', 'Pooka', 'Simon']]
+>>> shelfFile.close()
+
+>>> import pprint
+>>> cats = [{'name': 'Zophie', 'desc': 'chubby'}, {'name': 'Pooka', 'desc': 'fluffy'}]
+>>> pprint.pformat(cats)
+"[{'desc': 'chubby', 'name': 'Zophie'}, {'desc': 'fluffy', 'name': 'Pooka'}]"
+>>> fileObj = open('myCats.py', 'w')
+>>> fileObj.write('cats = ' + pprint.pformat(cats) + '\n')
+>>> fileObj.close()
+
+>>> import myCats
+>>> myCats.cats
+[{'name': 'Zophie', 'desc': 'chubby'}, {'name': 'Pooka', 'desc': 'fluffy'}]
+>>> myCats.cats[0]
+{'name': 'Zophie', 'desc': 'chubby'}
+>>> myCats.cats[0]['name']
+'Zophie'
+
+
+
+
+#####################################################################################
+## The shutil Module 
+## The shutil (or shell utilities) module has functions to let you copy, move,
+## rename, and delete files in your Python programs
+#####################################################################################
+
+## Copying Files and Folders
+
+>>> import shutil, os
+>>> os.chdir('C:\\')
+# The return value is the path of the newly copied file
+>>> copiedFile = shutil.copy('C:\\spam.txt', 'C:\\delicious')
+print(copiedFile)
+'C:\\delicious\\spam.txt'
+
+>>> copiedFile = shutil.copy('eggs.txt', 'C:\\delicious\\eggs2.txt')
+print(copiedFile)
+'C:\\delicious\\eggs2.txt'
+
+# shutil.copy() will copy a single file, shutil.copytree() will
+# copy an entire folder and every folder and file contained in it
+
+>>> import shutil, os
+>>> os.chdir('C:\\')
+>>> shutil.copytree('C:\\bacon', 'C:\\bacon_backup')
+'C:\\bacon_backup'
+
+>>> import shutil
+>>> shutil.move('C:\\bacon.txt', 'C:\\eggs')
+'C:\\eggs\\bacon.txt'
+>>> shutil.move('C:\\bacon.txt', 'C:\\eggs\\new_bacon.txt')
+'C:\\eggs\\new_bacon.txt'
+
+## Permanently Deleting Files and Folders
+
+# Calling os.unlink(path) will delete the file at path
+# Calling os.rmdir(path) will delete the folder at path
+# Calling shutil.rmtree(path) will remove the folder at path, and all files
+# and folders it contains will also be deleted
+
+import os
+for filename in os.listdir():
+	if filename.endswith('.rxt'):
+		print('File: %s deleted!' % filename)
+		os.unlink(filename)
+
+# Safe Deletes with the send2trash Module
+
+>>> import send2trash
+>>> baconFile = open('bacon.txt', 'a') # creates the file
+>>> baconFile.write('Bacon is not a vegetable.')
+>>> baconFile.close()
+>>> send2trash.send2trash('bacon.txt')
+		
+## Compressing Files with the zipfile Module
+
+# Reading ZIP Files
+
+>>> import zipfile, os
+>>> os.chdir('C:\\') # move to the folder with example.zip
+>>> exampleZip = zipfile.ZipFile('example.zip')
+>>> exampleZip.namelist()
+['spam.txt', 'cats/', 'cats/catnames.txt', 'cats/zophie.jpg']
+>>> spamInfo = exampleZip.getinfo('spam.txt')
+>>> spamInfo.file_size
+13908
+>>> spamInfo.compress_size
+3828
+>>> 'Compressed file is %sx smaller!' % (round(spamInfo.file_size / spamInfo.compress_size, 2))
+'Compressed file is 3.63x smaller!'
+>>> exampleZip.close()
+
+# Extracting from ZIP Files
+
+>>> import zipfile, os
+>>> os.chdir('C:\\') # move to the folder with example.zip
+>>> exampleZip = zipfile.ZipFile('example.zip')
+>>> exampleZip.extractall()
+>>> exampleZip.close()
+
+>>> exampleZip.extract('spam.txt')
+'C:\\spam.txt'
+>>> exampleZip.extract('spam.txt', 'C:\\some\\new\\folders')
+'C:\\some\\new\\folders\\spam.txt'
+>>> exampleZip.close()
+
+
+
