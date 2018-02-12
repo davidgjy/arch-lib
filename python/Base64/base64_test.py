@@ -11,7 +11,7 @@ def decode(encoded):
     return decodeStr.decode()
 
 def main():
-    srcStr = "fuck123789"
+    srcStr = "123abc456"
     print('source string: %s' % srcStr)
     encryptStr = encode(srcStr)
     print('encrypt string: %s' % encryptStr)
